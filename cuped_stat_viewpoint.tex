@@ -165,18 +165,17 @@
 \section{Déjà vu}
 
 On the third page Deng writes ‘the linear model makes strong assumptions that
-are usually not satisfied in practice, i.e., the conditional ex-
-pectation of the outcome metric is linear in the treatment
+are usually not satisfied in practice, i.e., the conditional expectation of the outcome metric is linear in the treatment
 assignment and covariates. In addition, it also requires all
 residuals to have a common variance’.
 
 As I am teaching statistics and econometrics I was eager to read further. 
 But than I encounter $\theta = \Cov(Y, X) / \Var(X)$ in equation 4 which is a theoretical
 counterpart of slope estimate in simple regression. 
-And later t-test is applied to $\delta_{cv}$ that is again equivalent to a second simple regression.
+And later t-test is applied to $\Delta_{cv}$ that is again equivalent to a second simple regression.
 Regression is replaced by something similar to two regressions. Déjà vu.
 
-So I diceded to expose the CUPED method using old boring regression language. 
+So I decided to expose the CUPED method using old boring regression language. 
 Let's see what will hapen!
 
 \section{Old regression friend}
@@ -194,18 +193,33 @@ with three variables:
 
 Using regression language CUPED is a two step procedure:
 
-Step one. Estimate the regression 
+\textbf{Step 1a}. Estimate the following regression using OLS: 
 \[
-    \hat y_i = \hat \gamma_1 + \hat\gamma_2 w_i + \hat \theta x_i
+    \hat y_i = \hat \gamma_1 + \hat\gamma_2 w_i + \hat \theta x_i.
 \]
-using OLS.
 
+\textbf{Step 1b}. Calculate the semiresidual $r_i = y_i - \hat \theta x_i$.
 
-Calculate semiresidual $r_i = y_i - \hat \theta x_i$.
 I call this $r_i$ 'semiresudual' as classic residual in econometrics is 
 \[
 \hat u_i = y_i - \hat y_i = y_i - (\hat\gamma_1 + \hat\gamma_2 w_i + \hat\theta x_i).
 \]
+
+
+\textbf{Step 2a}. Estimate the second regression using OLS:
+\[
+    \hat r_i = \hat \beta_1 + \hat \beta_2 w_i.
+\]
+
+\textbf{Step 2b}. Use classical standard errors to build confidence interval for $\beta_2$.
+
+
+Why this two-step procedure is better than just plain old multivariate regression
+\[
+    \hat y_i = \hat \gamma_1 + \hat\gamma_2 w_i + \hat \theta x_i
+\]
+with confidence interval for $\gamma_2$ build with classic standard errors? 
+
 
 
 Honestly speaking Deng is not very explicit which regression should be used in the first step.  
@@ -219,20 +233,6 @@ I will discuss why I prefer the inclusion of $w_i$ as regressor in the first ste
 
 
 
-Step two. Estimate regression 
-\[
-    \hat r_i = \hat \beta_1 + \hat \beta_2 w_i
-\]
- using OLS.
-
-Use classical standard errors to build confidence interval for $\beta_2$.
-
-
-Why this two-step procedure is better than just plain old multiple regression
-\[
-    \hat y_i = \hat \gamma_1 + \hat\gamma_2 w_i + \hat \theta x_i
-\]
-with confidence interval for $\gamma_2$ build with classic standard errors? 
 
 \section{Comparison with multivariate regression}
 
