@@ -122,6 +122,7 @@
 \DeclareMathOperator{\hVar}{\widehat{\Var}}
 
 \DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\sCov}{sCov}
 \DeclareMathOperator{\Corr}{Corr}
 \DeclareMathOperator{\pCorr}{pCorr}
 \DeclareMathOperator{\E}{\mathbb{E}}
@@ -277,6 +278,8 @@ As $\hat\beta_2$ estimate from second step is exactly equal to $\hat\gamma_2$ th
 
 And what about standard errors?
 
+Here I present a small summary of classic result in econometrics. 
+I find this useful for the completeness of the text. 
 
 Let's introduce the matrix of all predictors and its centered version.
 \[
@@ -306,7 +309,27 @@ Under our assumptions the true variance of estimates is
 \mid X \right) = \sigma^2 (X^TX)^{-1}.
 \]
 
-If we focus just on $\hat\gamma_2$ and $\hat\theta$ then 
+The default estimator of unknown $\sigma^2$ in multivariate regression with $k$ 
+estimated coefficients is given by 
+\[
+\hat\sigma^2 = \frac{RSS}{n - k} (X^TX)^{-1}.
+\]
+
+Hence in our case the default estimate of the variance of $\hat\beta_2$ will be found 
+in the matrix
+\[
+        \hVar\left( 
+        \begin{pmatrix}    
+            \hat \gamma_1 \\
+            \hat \gamma_2 \\
+            \hat \theta
+        \end{pmatrix}
+        \mid X \right) = \frac{RSS}{n - 3} (X^TX)^{-1}.
+\]
+
+
+
+If we ignore the $\hat\gamma_1$ and focus just on $\hat\gamma_2$ and $\hat\theta$ then 
 our regression is equivalent to regression in centered variables.
 
 \[
@@ -335,16 +358,25 @@ I rewrite it as
 And $\left(\frac{X_c^TX_c}{n-1}\right)$ is exactly the sample covariance matrix of the treatment 
 indicator $w_i$ and covariate $x_i$, 
 \[
-    \sVar\left(
+    \left(\frac{X_c^TX_c}{n-1}\right) = \sVar\left(
         \begin{pmatrix}    
             w \\
             x \\
         \end{pmatrix}
-    \right) =  \left(\frac{X_c^TX_c}{n-1}\right).    
+    \right) =  
+    \begin{pmatrix}    
+        \sVar(w) & \sCov(w, x) \\
+        \sCov(w, x) & \sVar(x) \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}    
+        \frac{\sum (w_i - \bar w)^2}{n-1} & \frac{\sum (w_i - \bar w)(x_i - \bar x)}{n-1} \\
+        \frac{\sum (w_i - \bar w)(x_i - \bar x)}{n-1} & \frac{\sum (x_i - \bar x)^2}{n-1} \\
+    \end{pmatrix}.    
 \]
 
 
-The sample covariance matrix with the growing number of observations will tend to a true 
+The sample covariance matrix with the growing number of observations will tend in probability to the true 
 covariance matrix 
 \[
 \plim_{n\to\infty} \sVar\left(
@@ -415,10 +447,56 @@ And they match almost perfectly! Now we understand what CUPED two-step procudure
 Ignoring the offset factor $(n-2)/(n-3)$ the CUPED replaces the sample 
 covariance of $w$ and $x$ by zero in the construction of a confidence interval for the effect. 
 
+It seems intuitive that using a-priori information is always better than ignoring it. 
+But the reality may seem a little bit surprising. 
+
+Imagine that Alice uses a-priori information about zero covariance of treatment and covariate. 
+And Bob uses an old multivariate regression that ignores this fact. 
+They both construct 95\% confidence intervals for the effect. 
+
+We have proven the point estimates of Alice and Bob are exactly equal. 
+As Alice uses more information her intervals should be shorter. 
+And we are in a contradiction now. 
+If Alice's interval is always shorter than Bob's interval then they cannot 
+both cover unknown parameter with probability 95\%.
+
+The use of a-priori information about zero covariance will sometime lead to a wider 
+confidence interval for the effect. 
+
+Let's study this counter-intuitive result with a toy problem. 
 
 \section{Toy problem to really understand the difference}
 
+Assume $y_i$ are independent and normally distributed $\cN(\mu, 1)$.
+Alice knows the true variance $\sigma^2 = 1$ and Bob uses the estimate 
+\[
+\hat\sigma^2 = \sVar(y) = \frac{\sum(y_i - \bar y)^2}{n-1}.    
+\]
 
+They both build 95\% confidence intervals for $\mu$. 
+Alice uses normal distribution and Bob uses t-distribution with $(n-1)$ degrees of freedom. 
+
+For simplicity let's assume that $n=10$. 
+
+Alice's confidence interval is 
+\[
+[\bar y - 1.96 \cdot 1/\sqrt{10}; \bar y - 1.96 \cdot 1/sqrt{10}].
+\]
+
+Bob's confidence interval is 
+\[
+[\bar y - 2.26 \cdot \hat\sigma/\sqrt{10}; \bar y - 2.26 \cdot \hat\sigma/sqrt{10}].        
+\]
+
+Here $1.96$ and $2.26$ are $0.975$ quantiles of 
+standard normal and t distribution with 9 degrees of freedom. 
+
+
+We immediately see that sometimes Bob's interval will be shorter and sometimes Alice's interval will. 
+
+When the number of observations will tend to infinity the quantiles will coinced, 
+$\plim \hat\sigma =1$, 
+so the intervals will be exactly the same. 
 
 
 \section{Heteroscedasticity case}
