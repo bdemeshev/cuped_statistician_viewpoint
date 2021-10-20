@@ -273,7 +273,13 @@ The error term $u_i$ satisfies $\E(u_i \mid X) = 0$, $\Var(u_i \mid X) = \sigma^
 [here goes the picture]
 
 
-It is well known in econometrics that OLS estimator $\hat\gamma_2$ is unbiased and consistent in this case.
+The next plot explains why inclusion of $w_i$ in the first step 
+gives better estimate of $\theta$ in this a simple model 
+
+[two plots]
+
+
+Under stated assumptions the OLS estimator $\hat\gamma_2$ is unbiased and consistent in this case.
 As $\hat\beta_2$ estimate from second step is exactly equal to $\hat\gamma_2$ the same result applies.
 
 And what about standard errors?
@@ -292,7 +298,7 @@ X = \begin{pmatrix}
 X_c = \begin{pmatrix}
     w_1 - \bar w & x_1 - \bar x \\
     w_2 - \bar w & x_2 - \bar x\\
-    \vdots & \vdots & \vdots \\
+    \vdots & \vdots \\
     w_n - \bar w& x_n  - \bar x \\
 \end{pmatrix}.    
 \]
@@ -315,8 +321,8 @@ estimated coefficients is given by
 \hat\sigma^2 = \frac{RSS}{n - k} (X^TX)^{-1}.
 \]
 
-Hence in our case the default estimate of the variance of $\hat\beta_2$ will be found 
-in the matrix
+In our case the default estimate of the variance of $\hat\gamma_2$ 
+will in the second column and second row of the matrix
 \[
         \hVar\left( 
         \begin{pmatrix}    
@@ -431,7 +437,7 @@ about zero covariance $\Cov(w_i, x_i) = 0$:
 
 The inversion of a diagonal matrix is easy and we get
 \[
-\hVar_{cuped}(\hat\gamma_2) = \frac{RSS/(n-3)}{n-1} \sVar(w)^{-1}.    
+\hVar_{cuped}(\hat\gamma_2 \mid X) = \frac{RSS/(n-3)}{n-1} \sVar(w)^{-1}.    
 \]
 
 
@@ -439,7 +445,7 @@ How this compares with the CUPED two-step procedure?
 
 The default variance estimate is equal to
 \[
-    \hVar(\hat\beta_2) = \frac{RSS}{n-2} \frac{1}{\sum (w_i - \bar w)^2} = \frac{RSS/(n-2)}{n-1} \sVar(w)^{-1}.
+    \hVar(\hat\beta_2 \mid w) = \frac{RSS}{n-2} \frac{1}{\sum (w_i - \bar w)^2} = \frac{RSS/(n-2)}{n-1} \sVar(w)^{-1}.
 \]
 
 And they match almost perfectly! Now we understand what CUPED two-step procudure does!
@@ -498,8 +504,72 @@ When the number of observations will tend to infinity the quantiles will coinced
 $\plim \hat\sigma =1$, 
 so the intervals will be exactly the same. 
 
+\section{Relaxing assumptions}
+
+Here we discuss two questions:
+
+\begin{itemize}
+    \item What will happen if my specification is wrong with respect to $x$?
+    \item What will happed if my specification is wrong with respect to $w$?
+\end{itemize}
+
+Now assume that the true model is 
+\[
+    y_i = \gamma_1 + \gamma_2 w_i + m(x_i) + u_i.
+\]
+    
+The observations are independent and identically distributed with finite forth moments. 
+The error term $u_i$ satisfies $\E(u_i \mid X) = 0$, $\Var(u_i \mid X) = \sigma^2$.
+    
+The function $m(x_i)$ is something deterministic like a polynomial $m(x_i) = \theta x_i + \delta x_i^2$.
+
+We ignore the complex structure of the function $m()$ and in the first step wronlgy estimate 
+\[
+    \hat y_i = \hat \gamma_1 + \hat \gamma_2 w_i + \hat \theta x_i.
+\]
+
+What will be the consequences? The OLS estimator $\hat\theta$ will be biased and inconsistent. 
+But we are not interested in estimation of $\theta$. 
+
+As $w_i$ is independent of $m(x_i)$ the two step CUPED procedure will still be valid!
+The estimator $\hat\gamma_2$ will be unbiased and consistent. 
+The two step CUPED will provide correct asymptotical coverage probability.
+
+What about finite sample coverage probability under additional normality assumption on $u_i$?
+
+
+\dots
+
+
+The case of interaction between $w_i$ and $x_i$ is more difficult. 
+As we see on the picture
+
+[here it is, two intersecting lines with different slopes]
+
+some users may benefit from $w_i=1$ and some users may be better with $w_i = 0$.
+
+In that case the two-step procedure will estimate the effect of $w_i = 1$ 
+averaged over all values of $x$.
+
+
+If the effect is always beneficial as on the picture 
+
+[one curve above other]
+
+the two step CUPED procedure will may be used to test the null hypothesis of no effect. 
 
 \section{Heteroscedasticity case}
+
+Now assume that the true model is 
+\[
+    y_i = \gamma_1 + \gamma_2 w_i + m(x_i) + u_i \cdot h(x_i).
+\]
+
+The point OLS estimate $\hat\gamma_2$ is still unbiased. 
+
+The standard approach in econometrics here is to use robust standard errors. 
+
+
 
 
 \section{Unanswered questions}
