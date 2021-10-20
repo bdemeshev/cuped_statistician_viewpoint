@@ -118,6 +118,9 @@
 \DeclareMathOperator*{\amx}{arg\,max}
 \DeclareMathOperator{\cov}{Cov}
 \DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\sVar}{sVar}
+\DeclareMathOperator{\hVar}{\widehat{\Var}}
+
 \DeclareMathOperator{\Cov}{Cov}
 \DeclareMathOperator{\Corr}{Corr}
 \DeclareMathOperator{\pCorr}{pCorr}
@@ -147,6 +150,9 @@
 \newcommand{\ind}[1]{\mathbbm{1}_{\{#1\}}} % Индикатор события
 \newcommand{\iid}{\mathrel{\stackrel{\rm i.\,i.\,d.}\sim}}
 \newcommand{\const}{\mathrm{const}}
+
+
+\newtheorem{theorem}{Theorem}
 
 \title{CUPED: statistician viewpoint}
 \author{Boris Demeshev}
@@ -214,35 +220,42 @@ I call this $r_i$ 'semiresudual' as classic residual in econometrics is
 \textbf{Step 2b}. Use classical standard errors to build confidence interval for $\beta_2$.
 
 
-Why this two-step procedure is better than just plain old multivariate regression
-\[
-    \hat y_i = \hat \gamma_1 + \hat\gamma_2 w_i + \hat \theta x_i
-\]
-with confidence interval for $\gamma_2$ build with classic standard errors? 
-
+Why this two-step procedure is better than just the multivariate regression
+of the first step with confidence interval for $\gamma_2$?
 
 
 Honestly speaking Deng is not very explicit which regression should be used in the first step.  
 On the page three the theoretical unknown $\theta$ is used. 
 
-So one may also consider a simplier alternative regression
-\[
-    \hat y_i = \hat \gamma_1 + \hat \theta x_i.
-\]
+So one may also consider a simplier alternative regression $\hat y_i = \hat \gamma_1 + \hat \theta x_i$.
 I will discuss why I prefer the inclusion of $w_i$ as regressor in the first step.
-
-
 
 
 \section{Comparison with multivariate regression}
 
 Let's talk about numeric estimates withoud assumptions at all. 
 
-[the proof of equality]
+\begin{theorem}
+    The proposed two step procedure gives exaclty the same estimates for both steps: $\hat\beta_1 = \hat\gamma_1$,
+    $\hat\beta_2 = \hat\gamma_2$, both residual vectors are also equal, $y_i - \hat y_i = r_i - \hat r_i$.
 
+    The residual sums of squares are equal for both steps
+    \[
+     RSS = \sum (y_i - \hat y_i)^2 = \sum (r_i - \hat r_i)^2.
+    \]
+\end{theorem}
 
+\begin{proof}
+Just remark that multivariate regression minimizes $\sum (y_i - \hat y_i)^2$ with 
+respect to the three parameters $\hat\gamma_1$, $\hat\gamma_2$, $\hat\theta$ simulteneously.
 
+Two step procedure has the same optimal $\hat \theta$ by design and on step two minimizes 
+the same sum with respect to $\hat\beta_1$ and $\hat beta_2$ 
+with $\hat\gamma$ fixed at the optimal value.
+\end{proof}
 
+Hence all the difference between the two approaches lies in standard errors and confidence intervals.
+To discuss the validity of standard errors we'll need some assumptions.
 
 
 Let's start easy first. No heteroscedasticity and no interaction between treatment $w_i$ and covariate $x_i$.
@@ -265,12 +278,145 @@ As $\hat\beta_2$ estimate from second step is exactly equal to $\hat\gamma_2$ th
 And what about standard errors?
 
 
+Let's introduce the matrix of all predictors and its centered version.
+\[
+X = \begin{pmatrix}
+    1 & w_1 & x_1 \\
+    1 & w_2 & x_2 \\
+    \vdots & \vdots & \vdots \\
+    1 & w_n & x_n \\
+\end{pmatrix},
+X_c = \begin{pmatrix}
+    w_1 - \bar w & x_1 - \bar x \\
+    w_2 - \bar w & x_2 - \bar x\\
+    \vdots & \vdots & \vdots \\
+    w_n - \bar w& x_n  - \bar x \\
+\end{pmatrix}.    
+\]
 
 
+Under our assumptions the true variance of estimates is
+\[
+\Var\left( 
+\begin{pmatrix}    
+    \hat \gamma_1 \\
+    \hat \gamma_2 \\
+    \hat \theta
+\end{pmatrix}
+\mid X \right) = \sigma^2 (X^TX)^{-1}.
+\]
+
+If we focus just on $\hat\gamma_2$ and $\hat\theta$ then 
+our regression is equivalent to regression in centered variables.
+
+\[
+\Var\left( 
+    \begin{pmatrix}    
+        \hat \gamma_2 \\
+        \hat \theta
+    \end{pmatrix}
+    \mid X \right) = \sigma^2 (X_c^TX_c)^{-1}.
+\]
+
+This is the FWL theorem or this result may be proven by block-matrix inversion. 
 
 
+Let's look closer on the conditional covariance matrix.
+I rewrite it as 
+\[
+    \Var\left( 
+        \begin{pmatrix}    
+            \hat \gamma_2 \\
+            \hat \theta
+        \end{pmatrix}
+        \mid X \right) = \frac{\sigma^2}{n-1} \left(\frac{X_c^TX_c}{n-1}\right)^{-1}.        
+\]
 
-\section{Toy problem to understand the difference}
+And $\left(\frac{X_c^TX_c}{n-1}\right)$ is exactly the sample covariance matrix of the treatment 
+indicator $w_i$ and covariate $x_i$, 
+\[
+    \sVar\left(
+        \begin{pmatrix}    
+            w \\
+            x \\
+        \end{pmatrix}
+    \right) =  \left(\frac{X_c^TX_c}{n-1}\right).    
+\]
+
+
+The sample covariance matrix with the growing number of observations will tend to a true 
+covariance matrix 
+\[
+\plim_{n\to\infty} \sVar\left(
+    \begin{pmatrix}    
+        w \\
+        x \\
+    \end{pmatrix}
+\right) = 
+\Var\left(
+    \begin{pmatrix}    
+        w_i \\
+        x_i \\
+    \end{pmatrix}
+\right) =     \begin{pmatrix}    
+    \Var(w_i) & \Cov(w_i, x_i) \\
+    \Cov(w_i, x_i) & \Var(x_i) \\
+\end{pmatrix}.
+\]
+
+What we know about the true covariance matrix?
+
+The treatment is assumed to be independent of the covariate, hence $\Cov(w_i, x_i) = 0$.
+If the probability of being treated is equal to $1/2$ then $\Var(w_i) = 1/4$.
+
+The classical estimate of covariance matrix is given by 
+\[
+\hVar\left( 
+    \begin{pmatrix}    
+        \hat \gamma_2 \\
+        \hat \theta
+    \end{pmatrix}
+    \mid X \right) = 
+\frac{RSS/(n-3)}{n-1} \left(\frac{X_c^TX_c}{n-1}\right)^{-1}.
+\]
+
+Let's replaced this classic estimator of covariance matrix by an estimator that uses a-priori information 
+about zero covariance $\Cov(w_i, x_i) = 0$:
+\[
+\hVar_{cuped}\left( 
+    \begin{pmatrix}    
+        \hat \gamma_2 \\
+        \hat \theta
+    \end{pmatrix}
+    \mid X \right) = 
+\frac{RSS/(n-3)}{n-1} 
+\begin{pmatrix}
+\sVar(w) & 0 \\
+0 & \sVar(x) \\
+\end{pmatrix}
+^{-1}.
+\]
+
+The inversion of a diagonal matrix is easy and we get
+\[
+\hVar_{cuped}(\hat\gamma_2) = \frac{RSS/(n-3)}{n-1} \sVar(w)^{-1}.    
+\]
+
+
+How this compares with the CUPED two-step procedure?
+
+The default variance estimate is equal to
+\[
+    \hVar(\hat\beta_2) = \frac{RSS}{n-2} \frac{1}{\sum (w_i - \bar w)^2} = \frac{RSS/(n-2)}{n-1} \sVar(w)^{-1}.
+\]
+
+And they match almost perfectly! Now we understand what CUPED two-step procudure does!
+
+Ignoring the offset factor $(n-2)/(n-3)$ the CUPED replaces the sample 
+covariance of $w$ and $x$ by zero in the construction of a confidence interval for the effect. 
+
+
+\section{Toy problem to really understand the difference}
 
 
 
