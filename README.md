@@ -1,2 +1,3 @@
-# cuped_statistician_viewpoint
-statistician viewpoint on cuped
+# Statistician viewpoint on cuped
+
+This text is published under two licenses: [unlisence]() and [wtfl](). Choose any one you wish.

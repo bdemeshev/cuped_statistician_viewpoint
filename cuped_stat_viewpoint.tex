@@ -1,0 +1,174 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage{etex} % расширение классического tex
+% в частности позволяет подгружать гораздо больше пакетов, чем мы и займёмся далее
+
+%\usepackage{mathtext} % русские буквы в формулах? (и без неё работает)
+% Например, $x_{\text{один}}$
+
+
+\usepackage{verbatim} % для многострочных комментариев
+\usepackage{makeidx} % для создания предметных указателей
+
+
+
+\usepackage{setspace}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{mathrsfs} % sudo yum install texlive-rsfs
+\usepackage{dsfont} % sudo yum install texlive-doublestroke
+\usepackage{array, multicol, multirow, bigstrut} % sudo yum install texlive-multirow
+\usepackage{indentfirst} % установка отступа в первом абзаце главы
+
+\usepackage{physics} % много вкусного
+
+
+\usepackage{bm}
+\usepackage{bbm} % шрифт с двойными буквами
+%\usepackage[perpage]{footmisc}
+
+\usepackage{dcolumn} % центрирование по разделителю для apsrtable
+
+% создание гиперссылок в pdf
+\usepackage[unicode, colorlinks=true, urlcolor=blue, hyperindex, breaklinks]{hyperref}
+
+
+\usepackage{microtype} % свешиваем пунктуацию
+% теперь знаки пунктуации могут вылезать за правую границу текста, при этом текст выглядит ровнее
+
+
+\usepackage{textcomp}  % Чтобы в формулах можно было русские буквы писать через \text{}
+
+% размер листа бумаги
+%\usepackage[paperwidth=145mm,paperheight=215mm,
+%height=182mm,width=113mm,top=20mm,includefoot]%{geometry}
+\usepackage[paper=a4paper, top=15mm, bottom=13.5mm, left=16.5mm, right=13.5mm, includefoot]{geometry}
+
+\usepackage{xcolor}
+
+% \usepackage[pdftex]{graphicx} % для вставки графики, убрано, т.к. knitr похоже сам добавляет
+
+\usepackage{float, longtable}
+\usepackage{soulutf8}
+
+\usepackage{enumitem} % дополнительные плюшки для списков
+%  например \begin{enumerate}[resume] позволяет продолжить нумерацию в новом списке
+
+\usepackage{mathtools}
+\usepackage{cancel, xspace} % sudo yum install texlive-cancel
+
+% \usepackage{minted} % display program code with syntax highlighting
+% требует установки pygments и python
+
+\usepackage{numprint} % sudo yum install texlive-numprint
+\npthousandsep{,}\npthousandthpartsep{}\npdecimalsign{.}
+
+
+\usepackage{subfigure} % для создания нескольких рисунков внутри одного
+
+\usepackage{tikz, pgfplots} % язык для рисования графики из latex'a
+\pgfplotsset{compat=1.16}
+\usetikzlibrary{trees} % tikz-прибамбас для рисовки деревьев
+\usepackage{tikz-qtree} % альтернативный tikz-прибамбас для рисовки деревьев
+\usetikzlibrary{arrows} % tikz-прибамбас для рисовки стрелочек подлиннее
+
+\usepackage{todonotes} % для вставки в документ заметок о том, что осталось сделать
+% \todo{Здесь надо коэффициенты исправить}
+% \missingfigure{Здесь будет Последний день Помпеи}
+% \listoftodos --- печатает все поставленные \todo'шки
+
+
+
+\usepackage{booktabs} %  красивые таблицы
+% заповеди из докупентации:
+% 1. Не используйте вертикальные линни
+% 2. Не используйте двойные линии
+% 3. Единицы измерения - в шапку таблицы
+% 4. Не сокращайте .1 вместо 0.1
+% 5. Повторяющееся значение повторяйте, а не говорите "то же"
+
+
+\usepackage{fontspec} % что-то про шрифты?
+\usepackage{polyglossia} % русификация xelatex
+\usepackage{csquotes}
+
+\setmainlanguage{english}
+\setotherlanguages{english}
+
+% download "Linux Libertine" fonts:
+% http://www.linuxlibertine.org/index.php?id=91&L=1
+\setmainfont{Linux Libertine O} % or Helvetica, Arial, Cambria
+% why do we need \newfontfamily:
+% http://tex.stackexchange.com/questions/91507/
+\newfontfamily{\cyrillicfonttt}{Linux Libertine O}
+
+\AddEnumerateCounter{\asbuk}{\russian@alph}{щ} % для списков с русскими буквами
+\setlist[enumerate, 1]{label=\asbuk*),ref=\asbuk*}
+
+
+
+
+
+% Операторы
+\DeclareMathOperator*\plim{plim}
+\DeclareMathOperator{\sgn}{sign}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\amn}{arg\,min}
+\DeclareMathOperator*{\amx}{arg\,max}
+\DeclareMathOperator{\cov}{Cov}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\pCorr}{pCorr}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\let\P\relax
+\DeclareMathOperator{\P}{\mathbb{P}}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+
+% Распределения
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cBinom}{\mathcal{Binom}}
+\newcommand{\cPois}{\mathcal{Pois}}
+\newcommand{\cBeta}{\mathcal{Beta}}
+\newcommand{\cGamma}{\mathcal{Gamma}}
+
+% Множества
+\def \R{\mathbb{R}}
+\def \N{\mathbb{N}}
+\def \Z{\mathbb{Z}}
+
+% Другое
+\newcommand{\dx}[1]{\,\mathrm{d}#1} % Для интеграла: маленький отступ и прямая d
+\newcommand{\ind}[1]{\mathbbm{1}_{\{#1\}}} % Индикатор события
+\newcommand{\iid}{\mathrel{\stackrel{\rm i.\,i.\,d.}\sim}}
+\newcommand{\const}{\mathrm{const}}
+
+\title{CUPED: statistician viewpoint}
+\author{Boris Demeshev}
+
+\begin{document}
+
+\begin{abstract}
+    This articles tries to give honest statistical background to the CUPED method.
+    Statistical background allows to correctly include multiple predictors and 
+    use heteroscedasticity robust standard errors.
+\end{abstract}
+
+
+\maketitle
+
+\section{The contradiction}
+
+\section{Comparison with multiple regression}
+
+\section{Toy problem to understand the difference}
+
+\section{Heteroscedasticity case}
+
+
+\end{document}
